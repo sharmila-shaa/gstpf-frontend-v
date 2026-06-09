@@ -118,6 +118,9 @@ function exportCSV() {
     "Mobile Number",
     "Email",
     "Address",
+    "State",
+    "District", 
+    "Status",
   ];
 
   const rows = records.value.map((record) => [
@@ -127,6 +130,9 @@ function exportCSV() {
     getMobile(record),
     getEmail(record),
     getAddress(record),
+    getState(record),
+    getDistrict(record),
+    getStatus(record),
   ]);
 
   const csv = [headings, ...rows]
@@ -236,7 +242,7 @@ function exportCSV() {
             <th>Address</th>
             <th>State</th>
             <th>District</th>
-            <th>status</th>
+            <th>Status</th>
           </tr>
         </thead>
 
