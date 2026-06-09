@@ -14,21 +14,13 @@ const hasRecords = computed(() => {
 });
 
 function normalizeRecords(response) {
-  console.log("Full backend response:", response);
-
   const possibleRecords =
     response?.data?.data ||
     response?.data?.records ||
-    response?.data?.result ||
-    response?.data?.lst ||
-    response?.data?.gstpList ||
+    response?.data ||
     response?.records ||
     response?.result ||
-    response?.lst ||
-    response?.gstpList ||
     response;
-
-  console.log("Normalized records:", possibleRecords);
 
   return Array.isArray(possibleRecords) ? possibleRecords : [];
 }
@@ -38,20 +30,12 @@ function getEnrollmentNumber(record) {
     record.enrollment_no ||
     record.enrollmentNo ||
     record.enrlNo ||
-    record.enrNo ||
-    record.gstpEnrlNo ||
     "-"
   );
 }
 
 function getName(record) {
-  return (
-    record.name ||
-    record.trpNam ||
-    record.taxpayerName ||
-    record.gstpName ||
-    "-"
-  );
+  return record.name || record.trpNam || "-";
 }
 
 function getPincode(record) {
@@ -61,7 +45,6 @@ function getPincode(record) {
     record.pinCd ||
     record.pnCd ||
     record.adrs?.pinCode ||
-    record.address?.pinCode ||
     "-"
   );
 }
@@ -72,18 +55,12 @@ function getMobile(record) {
     record.mobileNo ||
     record.mbNo ||
     record.cntctNo ||
-    record.mobile ||
     "-"
   );
 }
 
 function getEmail(record) {
-  return (
-    record.email_id ||
-    record.emailId ||
-    record.email ||
-    "-"
-  );
+  return record.email_id || record.emailId || "-";
 }
 
 function getAddress(record) {
@@ -101,45 +78,9 @@ function getAddress(record) {
       .join(", ");
   }
 
-  if (record.address && typeof record.address === "object") {
-    return Object.values(record.address)
-      .filter(Boolean)
-      .join(", ");
-  }
-
   return "-";
 }
 
-function getState(record) {
-  return (
-    record.state ||
-    record.stateName ||
-    record.st ||
-    record.adrs?.state ||
-    record.address?.state ||
-    "-"
-  );
-}
-
-function getDistrict(record) {
-  return (
-    record.district ||
-    record.districtName ||
-    record.dist ||
-    record.adrs?.district ||
-    record.address?.district ||
-    "-"
-  );
-}
-
-function getStatus(record) {
-  return (
-    record.status ||
-    record.sts ||
-    record.registrationStatus ||
-    "-"
-  );
-}
 async function submitSearch() {
   errorMessage.value = "";
   records.value = [];
@@ -158,7 +99,6 @@ async function submitSearch() {
     const response = await searchGSTPractitioners(cleanPincode);
 
     records.value = normalizeRecords(response);
-}
   } catch (error) {
     errorMessage.value = error.message;
   } finally {
@@ -302,7 +242,7 @@ function exportCSV() {
             <th>Address</th>
             <th>State</th>
             <th>District</th>
-            <th>Status</th>
+            <th>status</th>
           </tr>
         </thead>
 
