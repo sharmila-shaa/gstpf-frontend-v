@@ -234,6 +234,9 @@ function exportCSV() {
             <th>Mobile Number</th>
             <th>Email</th>
             <th>Address</th>
+            <th>State</th>
+            <th>District</th>
+            <th>status</th>
           </tr>
         </thead>
 
@@ -248,6 +251,9 @@ function exportCSV() {
             <td>{{ getMobile(record) }}</td>
             <td>{{ getEmail(record) }}</td>
             <td>{{ getAddress(record) }}</td>
+            <td>{{ getState(record) }}</td>
+            <td>{{ getDistrict(record) }}</td>
+            <td>{{ getStatus(record) }}</td>
           </tr>
         </tbody>
       </table>
