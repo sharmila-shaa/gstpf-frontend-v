@@ -80,6 +80,17 @@ function getAddress(record) {
 
   return "-";
 }
+function getState(record) {
+  return record.state || record.st || record.adrs?.state || "-";
+}
+
+function getDistrict(record) {
+  return record.district || record.dist || record.adrs?.district || "-";
+}
+
+function getStatus(record) {
+  return record.status || record.sts || "-";
+}
 
 async function submitSearch() {
   errorMessage.value = "";
