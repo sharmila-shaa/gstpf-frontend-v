@@ -158,12 +158,6 @@ async function submitSearch() {
     const response = await searchGSTPractitioners(cleanPincode);
 
     records.value = normalizeRecords(response);
-    console.log("Final table records:", records.value);
-
-if (!records.value.length) {
-  errorMessage.value =
-    response?.message ||
-    "No GST Practitioners were found for this pincode.";
 }
   } catch (error) {
     errorMessage.value = error.message;
