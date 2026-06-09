@@ -254,7 +254,7 @@ function exportCSV() {
     </div>
 
     <div
-      v-else-if="hasSearched && !isLoading"
+      v-else-if="hasSearched && !isLoading && !errorMessage"
       class="alert alert-info"
     >
       No GST Practitioners were found for this pincode.

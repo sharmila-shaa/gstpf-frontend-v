@@ -20,7 +20,7 @@ async function request(path, options = {}) {
 
   const text = await response.text();
 
-  let data;
+  let data = {};
 
   try {
     data = text ? JSON.parse(text) : {};
@@ -31,10 +31,12 @@ async function request(path, options = {}) {
   }
 
   if (!response.ok) {
+    console.error("Backend error response:", data);
+
     throw new Error(
       data.message ||
         data.error?.message ||
-        "Unable to complete the request",
+        `Request failed with status ${response.status}`,
     );
   }
 
@@ -56,9 +58,10 @@ export function loginUser(payload) {
 }
 
 export function searchGSTPractitioners(pincode) {
-  const encodedPincode = encodeURIComponent(pincode);
-
-  return request(`/api/gstp/search?pincode=${encodedPincode}`, {
-    method: "GET",
-  });
+  return request(
+    `/api/gstp/search?pincode=${encodeURIComponent(pincode)}`,
+    {
+      method: "GET",
+    },
+  );
 }
