@@ -14,13 +14,21 @@ const hasRecords = computed(() => {
 });
 
 function normalizeRecords(response) {
+  console.log("Full backend response:", response);
+
   const possibleRecords =
     response?.data?.data ||
     response?.data?.records ||
-    response?.data ||
+    response?.data?.result ||
+    response?.data?.lst ||
+    response?.data?.gstpList ||
     response?.records ||
     response?.result ||
+    response?.lst ||
+    response?.gstpList ||
     response;
+
+  console.log("Normalized records:", possibleRecords);
 
   return Array.isArray(possibleRecords) ? possibleRecords : [];
 }
@@ -30,12 +38,20 @@ function getEnrollmentNumber(record) {
     record.enrollment_no ||
     record.enrollmentNo ||
     record.enrlNo ||
+    record.enrNo ||
+    record.gstpEnrlNo ||
     "-"
   );
 }
 
 function getName(record) {
-  return record.name || record.trpNam || "-";
+  return (
+    record.name ||
+    record.trpNam ||
+    record.taxpayerName ||
+    record.gstpName ||
+    "-"
+  );
 }
 
 function getPincode(record) {
@@ -45,6 +61,7 @@ function getPincode(record) {
     record.pinCd ||
     record.pnCd ||
     record.adrs?.pinCode ||
+    record.address?.pinCode ||
     "-"
   );
 }
@@ -55,12 +72,18 @@ function getMobile(record) {
     record.mobileNo ||
     record.mbNo ||
     record.cntctNo ||
+    record.mobile ||
     "-"
   );
 }
 
 function getEmail(record) {
-  return record.email_id || record.emailId || "-";
+  return (
+    record.email_id ||
+    record.emailId ||
+    record.email ||
+    "-"
+  );
 }
 
 function getAddress(record) {
@@ -78,20 +101,45 @@ function getAddress(record) {
       .join(", ");
   }
 
+  if (record.address && typeof record.address === "object") {
+    return Object.values(record.address)
+      .filter(Boolean)
+      .join(", ");
+  }
+
   return "-";
 }
+
 function getState(record) {
-  return record.state || record.st || record.adrs?.state || "-";
+  return (
+    record.state ||
+    record.stateName ||
+    record.st ||
+    record.adrs?.state ||
+    record.address?.state ||
+    "-"
+  );
 }
 
 function getDistrict(record) {
-  return record.district || record.dist || record.adrs?.district || "-";
+  return (
+    record.district ||
+    record.districtName ||
+    record.dist ||
+    record.adrs?.district ||
+    record.address?.district ||
+    "-"
+  );
 }
 
 function getStatus(record) {
-  return record.status || record.sts || "-";
+  return (
+    record.status ||
+    record.sts ||
+    record.registrationStatus ||
+    "-"
+  );
 }
-
 async function submitSearch() {
   errorMessage.value = "";
   records.value = [];
@@ -110,6 +158,13 @@ async function submitSearch() {
     const response = await searchGSTPractitioners(cleanPincode);
 
     records.value = normalizeRecords(response);
+    console.log("Final table records:", records.value);
+
+if (!records.value.length) {
+  errorMessage.value =
+    response?.message ||
+    "No GST Practitioners were found for this pincode.";
+}
   } catch (error) {
     errorMessage.value = error.message;
   } finally {
