@@ -1,16 +1,31 @@
-body {
-  min-height: 100vh;
-  background-color: #f8f9fa;
+.gst-search-form {
+  background: #ffffff;
+  padding: 10px 30px 30px;
 }
 
-main {
-  min-height: calc(100vh - 56px);
+.gst-search-form .form-label {
+  font-size: 18px;
+  color: #000;
+  margin-bottom: 8px;
 }
 
-table {
-  font-size: 0.92rem;
+.gst-input {
+  height: 52px;
+  border-radius: 0;
+  font-size: 18px;
+  border: 1px solid #cfcfcf;
+  padding: 10px 18px;
 }
 
-.navbar-brand {
-  font-weight: 600;
+.gst-search-btn {
+  background-color: #2f5597;
+  color: #ffffff;
+  border-radius: 0;
+  padding: 10px 38px;
+  font-size: 18px;
+}
+
+.gst-search-btn:hover {
+  background-color: #24477f;
+  color: #ffffff;
 }

@@ -3,6 +3,9 @@ import { computed, ref } from "vue";
 import { searchGSTPractitioners } from "../services/api";
 
 const pincode = ref("");
+const name = ref("");
+const state = ref("");
+const district = ref("");
 const records = ref([]);
 
 const isLoading = ref(false);
@@ -174,37 +177,90 @@ function exportCSV() {
         Export CSV
       </button>
     </div>
-
-    <div class="card shadow-sm mb-4">
-      <div class="card-body">
-        <form
-          class="row g-3"
-          @submit.prevent="submitSearch"
-        >
-          <div class="col-md-8">
-            <label class="form-label">Pincode</label>
-
-            <input
-              v-model="pincode"
-              class="form-control"
-              type="text"
-              maxlength="6"
-              placeholder="Example: 600001"
-            />
-          </div>
-
-          <div class="col-md-4 d-flex align-items-end">
-            <button
-              class="btn btn-primary w-100"
-              type="submit"
-              :disabled="isLoading"
-            >
-              {{ isLoading ? "Searching..." : "Search" }}
-            </button>
-          </div>
-        </form>
-      </div>
+    <div class="search-area mb-4">
+        <form class="gst-search-form" @submit.prevent="submitSearch">
+  <div class="row align-items-end g-4">
+    <div class="col-md-3">
+      <label class="form-label">Name</label>
+      <input
+        v-model="name"
+        class="form-control gst-input"
+        type="text"
+        placeholder="Enter name of GSTP"
+      />
     </div>
+
+    <div class="col-md-3">
+      <label class="form-label">
+        State <span class="text-danger">*</span>
+      </label>
+      <select v-model="state" class="form-select gst-input">
+        <option value="">Select</option>
+        <option value="Andaman and Nicobar Islands">Andaman and Nicobar Islands</option>
+        <option value="Andhra Pradesh">Andhra Pradesh</option>
+        <option value="Arunachal Pradesh">Arunachal Pradesh</option>
+        <option value="Assam">Assam</option>
+        <option value="Bihar">Bihar</option>
+        <option value="Chhattisgarh">Chhattisgarh</option>
+        <option value="Goa">Goa</option>
+        <option value="Gujarat">Gujarat</option>
+        <option value="Haryana">Haryana</option>
+        <option value="Himachal Pradesh">Himachal Pradesh</option>
+        <option value="Jharkhand">Jharkhand</option>
+        <option value="Karnataka">Karnataka</option>
+        <option value="Kerala">Kerala</option>
+        <option value="Madhya Pradesh">Madhya Pradesh</option>
+        <option value="Maharashtra">Maharashtra</option>
+        <option value="Manipur">Manipur</option>
+        <option value="Meghalaya">Meghalaya</option>
+        <option value="Mizoram">Mizoram</option>
+        <option value="Nagaland">Nagaland</option>
+        <option value="Odisha">Odisha</option>
+        <option value="puducherry">Puducherry</option>
+        <option value="Punjab">Punjab</option>
+        <option value="Rajasthan">Rajasthan</option>
+        <option value="Sikkim">Sikkim</option>
+        <option value="Tamil Nadu">Tamil Nadu</option>
+        <option value="Telangana">Telangana</option>
+        <option value="Tripura">Tripura</option>
+        <option value="Uttar Pradesh">Uttar Pradesh</option>
+        <option value="Uttarakhand">Uttarakhand</option>
+        <option value="West Bengal">West Bengal</option>  
+      </select>
+    </div>
+
+    <div class="col-md-3">
+      <label class="form-label">District</label>
+      <select v-model="district" class="form-select gst-input">
+        <option value="">Select</option>
+        <option value="Chennai">Chennai</option>
+        
+      </select>
+    </div>
+
+    <div class="col-md-3">
+      <label class="form-label">Pincode</label>
+      <input
+        v-model="pincode"
+        class="form-control gst-input"
+        type="text"
+        maxlength="6"
+        placeholder="Enter Pincode"
+      />
+    </div>
+  </div>
+
+  <div class="text-end mt-5">
+    <button
+      class="btn gst-search-btn"
+      type="submit"
+      :disabled="isLoading"
+    >
+      {{ isLoading ? "SEARCHING..." : "SEARCH" }}
+    </button>
+  </div>
+</form>
+</div>
 
     <div
       v-if="errorMessage"
