@@ -1,11 +1,13 @@
 <script setup>
-import { computed, ref } from "vue";
-import { searchGSTPractitioners } from "../services/api";
+import { computed,onMounted, ref,watch } from "vue";
+import { searchGSTPractitioners, getCountriesStates } from "../services/api";
 
 const pincode = ref("");
+const countries = ref([]);
 const name = ref("");
 const state = ref("");
 const district = ref("");
+const districts = ref([]);
 const records = ref([]);
 
 const isLoading = ref(false);
@@ -15,7 +17,42 @@ const hasSearched = ref(false);
 const hasRecords = computed(() => {
   return records.value.length > 0;
 });
+const indiaStates = computed(() => {
+  const india = countries.value.find(
+    (country) => country.name === "India"
+  );
 
+  return india?.states || [];
+});
+
+onMounted(async () => {
+  const response = await getCountriesStates();
+  countries.value = response.data || [];
+});
+watch(state, async (newState) => {
+  district.value = "";
+  districts.value = [];
+
+  if (!newState) return;
+
+  const response = await fetch(
+    "http://localhost:3000/api/location/districts",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        state: newState
+      })
+    }
+  );
+
+  const data = await response.json();
+console.log("Selected State:", newState);
+console.log("District Response:", data);
+  districts.value = data.data || [];
+});
 function normalizeRecords(response) {
   const possibleRecords =
     response?.data?.data ||
@@ -99,7 +136,12 @@ async function submitSearch() {
   try {
     isLoading.value = true;
 
-    const response = await searchGSTPractitioners(cleanPincode);
+    const response = await searchGSTPractitioners({
+  name: name.value.trim(),
+  state: state.value,
+  district: district.value,
+  pincode: cleanPincode,
+});
 
     records.value = normalizeRecords(response);
   } catch (error) {
@@ -193,50 +235,34 @@ function exportCSV() {
     <div class="col-md-3">
       <label class="form-label">
         State <span class="text-danger">*</span>
-      </label>
-      <select v-model="state" class="form-select gst-input">
-        <option value="">Select</option>
-        <option value="Andaman and Nicobar Islands">Andaman and Nicobar Islands</option>
-        <option value="Andhra Pradesh">Andhra Pradesh</option>
-        <option value="Arunachal Pradesh">Arunachal Pradesh</option>
-        <option value="Assam">Assam</option>
-        <option value="Bihar">Bihar</option>
-        <option value="Chhattisgarh">Chhattisgarh</option>
-        <option value="Goa">Goa</option>
-        <option value="Gujarat">Gujarat</option>
-        <option value="Haryana">Haryana</option>
-        <option value="Himachal Pradesh">Himachal Pradesh</option>
-        <option value="Jharkhand">Jharkhand</option>
-        <option value="Karnataka">Karnataka</option>
-        <option value="Kerala">Kerala</option>
-        <option value="Madhya Pradesh">Madhya Pradesh</option>
-        <option value="Maharashtra">Maharashtra</option>
-        <option value="Manipur">Manipur</option>
-        <option value="Meghalaya">Meghalaya</option>
-        <option value="Mizoram">Mizoram</option>
-        <option value="Nagaland">Nagaland</option>
-        <option value="Odisha">Odisha</option>
-        <option value="puducherry">Puducherry</option>
-        <option value="Punjab">Punjab</option>
-        <option value="Rajasthan">Rajasthan</option>
-        <option value="Sikkim">Sikkim</option>
-        <option value="Tamil Nadu">Tamil Nadu</option>
-        <option value="Telangana">Telangana</option>
-        <option value="Tripura">Tripura</option>
-        <option value="Uttar Pradesh">Uttar Pradesh</option>
-        <option value="Uttarakhand">Uttarakhand</option>
-        <option value="West Bengal">West Bengal</option>  
-      </select>
-    </div>
+      </label><select v-model="state" class="form-select gst-input">
+  <option value="">Select</option>
 
-    <div class="col-md-3">
-      <label class="form-label">District</label>
-      <select v-model="district" class="form-select gst-input">
-        <option value="">Select</option>
-        <option value="Chennai">Chennai</option>
-        
-      </select>
+  <option
+    v-for="item in indiaStates"
+    :key="item.name"
+    :value="item.name"
+  >
+    {{ item.name }}
+  </option>
+</select>
+       
     </div>
+<div class="col-md-3">
+  <label class="form-label">District</label>
+
+  <select v-model="district" class="form-select gst-input">
+    <option value="">Select</option>
+
+    <option
+      v-for="item in districts"
+      :key="item"
+      :value="item"
+    >
+      {{ item }}
+    </option>
+  </select>
+</div>
 
     <div class="col-md-3">
       <label class="form-label">Pincode</label>
