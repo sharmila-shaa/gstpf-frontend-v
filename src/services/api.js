@@ -57,11 +57,20 @@ export function loginUser(payload) {
   });
 }
 
-export function searchGSTPractitioners(pincode) {
-  return request(
-    `/api/gstp/search?pincode=${encodeURIComponent(pincode)}`,
-    {
-      method: "GET",
-    },
-  );
+export function searchGSTPractitioners(filters) {
+  const params = new URLSearchParams();
+
+  if (filters.name) params.append("name", filters.name);
+  if (filters.state) params.append("state", filters.state);
+  if (filters.district) params.append("district", filters.district);
+  if (filters.pincode) params.append("pincode", filters.pincode);
+
+  return request(`/api/gstp/search?${params.toString()}`, {
+    method: "GET",
+  });
+}
+export function getCountriesStates() {
+  return request("/api/location/states", {
+    method: "GET",
+  });
 }
