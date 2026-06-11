@@ -236,7 +236,7 @@ function exportCSV() {
       <label class="form-label">
         State <span class="text-danger">*</span>
       </label><select v-model="state" class="form-select gst-input">
-        <option value="">Select</option>
+  <option value="">Select</option>
 
   <option
     v-for="item in indiaStates"
@@ -245,14 +245,14 @@ function exportCSV() {
   >
     {{ item.name }}
   </option>
-      </select>
+</select>
        
     </div>
-    <div class="col-md-3">
-      <label class="form-label">District</label>
+<div class="col-md-3">
+  <label class="form-label">District</label>
 
-      <select v-model="district" class="form-select gst-input">
-        <option value="">Select</option>
+  <select v-model="district" class="form-select gst-input">
+    <option value="">Select</option>
 
     <option
       v-for="item in districts"
@@ -261,8 +261,8 @@ function exportCSV() {
     >
       {{ item }}
     </option>
-      </select>
-    </div>
+  </select>
+</div>
 
     <div class="col-md-3">
       <label class="form-label">Pincode</label>
