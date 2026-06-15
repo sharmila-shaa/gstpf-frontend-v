@@ -285,7 +285,7 @@ function exportCSV() {
             </select>
           </div>
 
-          <div class="col-md-3">
+          <div class="col-md-4">
             <label class="form-label">District</label>
 
             <select v-model="district" class="form-select gst-input">
