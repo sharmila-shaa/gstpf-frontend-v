@@ -31,14 +31,19 @@ async function request(path, options = {}) {
   }
 
   if (!response.ok) {
-    console.error("Backend error response:", data);
+  console.error("Backend error response:", data);
 
-    throw new Error(
-      data.message ||
-        data.error?.message ||
-        `Request failed with status ${response.status}`,
-    );
+  if (response.status === 500) {
+    throw new Error("No records found");
   }
+
+  throw new Error(
+    data.message ||
+      data.error ||
+      data.error?.message ||
+      `Request failed with status ${response.status}`,
+  );
+}
 
   return data;
 }
