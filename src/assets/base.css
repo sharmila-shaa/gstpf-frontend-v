@@ -84,3 +84,10 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+.result-count {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  text-align: right;
+  color: #1f2933;
+}

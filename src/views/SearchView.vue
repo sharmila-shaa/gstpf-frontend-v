@@ -17,7 +17,74 @@ const hasSearched = ref(false);
 const hasRecords = computed(() => {
   return records.value.length > 0;
 });
+const currentPage = ref(1);
+const itemsPerPage = ref(10);
+const currentPageRecords = computed(() => {
+  return paginatedRecords.value.length;
+});
+const totalPages = computed(() => {
+  return Math.ceil(records.value.length / itemsPerPage.value);
+});
 
+const paginatedRecords = computed(() => {
+  const start = (currentPage.value - 1) * itemsPerPage.value;
+  const end = start + itemsPerPage.value;
+
+  return records.value.slice(start, end);
+});
+
+const visiblePages = computed(() => {
+  const total = totalPages.value;
+  const current = currentPage.value;
+  const pages = [];
+
+  if (total <= 8) {
+    for (let i = 1; i <= total; i++) {
+      pages.push(i);
+    }
+
+    return pages;
+  }
+
+  pages.push(1);
+
+  if (current > 4) {
+    pages.push("...");
+  }
+
+  const start = Math.max(2, current - 2);
+  const end = Math.min(total - 1, current + 2);
+
+  for (let i = start; i <= end; i++) {
+    pages.push(i);
+  }
+
+  if (current < total - 3) {
+    pages.push("...");
+  }
+
+  pages.push(total);
+
+  return pages;
+});
+
+function goToPage(page) {
+  if (page === "...") return;
+
+  currentPage.value = page;
+}
+
+function previousPage() {
+  if (currentPage.value > 1) {
+    currentPage.value--;
+  }
+}
+
+function nextPage() {
+  if (currentPage.value < totalPages.value) {
+    currentPage.value++;
+  }
+}
 const indiaStates = computed(() => {
   const india = countries.value.find(
     (country) => country.name === "India"
@@ -135,7 +202,7 @@ function getAddress(record) {
 }
 
 function getStatus(record) {
-  return record.status || record.sts || "-";
+  return record.status || record.sts || "-";  
 }
 
 async function submitSearch() {
@@ -169,6 +236,7 @@ async function submitSearch() {
     });
 
     records.value = normalizeRecords(response);
+    currentPage.value = 1;
   } catch (error) {
     errorMessage.value =
       error.response?.data?.message ||
@@ -285,7 +353,7 @@ function exportCSV() {
             </select>
           </div>
 
-          <div class="col-md-3">
+          <div class="col-md-4">
             <label class="form-label">District</label>
 
             <select v-model="district" class="form-select gst-input">
@@ -334,35 +402,78 @@ function exportCSV() {
       <p class="mt-2">Loading GST Practitioner records...</p>
     </div>
 
-    <div v-else-if="hasRecords" class="table-responsive">
-      <table class="table table-bordered table-striped align-middle">
+    <div v-else-if="hasRecords">
+  <div class="result-count">
+    Total Records: {{ records.length }}/Records per page: {{ currentPageRecords }}
+  </div>
+
+  <div class="table-responsive">
+    <table class="table table-bordered table-striped align-middle">
         <thead class="table-dark">
           <tr>
-            <th>Enrollment Number</th>
-            <th>Name of GSTP</th>
-            <th>Pincode</th>
-            <th>Mobile Number</th>
-            <th>Email</th>
-            <th>Address</th>
-            <th>Status</th>
+            <th class="text-center align-middle">Enrollment Number</th>
+<th class="text-center align-middle">Name of GSTP</th>
+<th class="text-center align-middle">Pincode</th>
+<th class="text-center align-middle">Mobile Number</th>
+<th class="text-center align-middle">Email</th>
+<th class=" align-middle">Address</th>
+<th class="text-center align-middle">Status</th>
           </tr>
         </thead>
 
         <tbody>
           <tr
-            v-for="(record, index) in records"
+            v-for="(record, index) in paginatedRecords"
             :key="record.id || getEnrollmentNumber(record) || index"
           >
-            <td>{{ getEnrollmentNumber(record) }}</td>
-            <td>{{ getName(record) }}</td>
-            <td>{{ getPincode(record) }}</td>
-            <td>{{ getMobile(record) }}</td>
-            <td>{{ getEmail(record) }}</td>
-            <td>{{ getAddress(record) }}</td>
-            <td>{{ getStatus(record) }}</td>
+            <td class="text-center align-middle">{{ getEnrollmentNumber(record) }}</td>
+            <td class="text-center align-middle">{{ getName(record) }}</td>
+            <td class="text-center align-middle">{{ getPincode(record) }}</td>
+            <td class="text-center align-middle">{{ getMobile(record) }}</td>
+            <td class="text-center align-middle">{{ getEmail(record) }}</td>
+            <td class=" align-middle">{{ getAddress(record) }}</td>
+            <td class="text-center align-middle">{{ getStatus(record) }}</td>
           </tr>
         </tbody>
       </table>
+      </div>
+            
+
+      <div v-if="totalPages > 1" class="pagination-wrapper">
+        <button
+          class="page-btn"
+          type="button"
+          :disabled="currentPage === 1"
+          @click="previousPage"
+        >
+          «
+        </button>
+
+        <button
+          v-for="page in visiblePages"
+          :key="page"
+          class="page-btn"
+          type="button"
+          :class="{
+            active: currentPage === page,
+            dots: page === '...'
+          }"
+          :disabled="page === '...'"
+          @click="goToPage(page)"
+        >
+          {{ page }}
+        </button>
+
+        <button
+          class="page-btn"
+          type="button"
+          :disabled="currentPage === totalPages"
+          @click="nextPage"
+        >
+          »
+        </button>
+      </div>
+    
     </div>
 
     <div

@@ -29,3 +29,15 @@
   background-color: #24477f;
   color: #ffffff;
 }
+.table-responsive {
+  max-height: 650px;
+  overflow-y: auto;
+}
+
+.table-responsive thead th {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background-color: #212529;
+  color: #ffffff;
+}
